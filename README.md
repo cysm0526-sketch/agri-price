@@ -9,37 +9,45 @@ KAMIS 가격 · 기상 · 뉴스 데이터를 결합하여 농산물 가격 변�
 
 ## 다른 PC에서 이어서 작업하기
 
-**저장소에는 코드만 들어갑니다.** `data/`(98MB API 캐시)와 `.env`(키)는
-`.gitignore` 로 제외되어 있습니다. 캐시는 재수집으로 복원되고, 키는 손으로
-옮겨야 합니다.
+압축본(`agri-price-전체.zip`)을 풀면 **코드 + git 이력 + `.env`(키)** 가
+그대로 들어 있습니다. `data/` 는 용량(98MB) 때문에 빠져 있고, 재수집으로
+복원됩니다.
 
 ```bash
-# 1) 클론
-git clone <저장소 URL> && cd agri-price
-
-# 2) Python 3.11+ 와 의존성
+# 1) 압축 해제 후 그 폴더에서
 python -m venv .venv
-.venv\Scripts\activate      # macOS/Linux: source .venv/bin/activate
+.venv\Scripts\activate          # macOS/Linux: source .venv/bin/activate
 pip install -e .
 
-# 3) 키 설정 — ★ 이것만 git 으로 옮겨지지 않습니다
-cp .env.example .env        # 값은 기존 PC 의 .env 를 보고 직접 입력
-git check-ignore -v .env    # 무시된다고 나와야 정상
+# 2) 키 확인 (.env 가 이미 들어 있음)
+python -c "from src import config; print('KAMIS', bool(config.KAMIS_KEY), '| data.go.kr', bool(config.DATA_GO_KR_KEY))"
 
-# 4) 동작 확인 (키 없이도 됨)
+# 3) 동작 확인 (키 없이도 됨)
 python scripts/build_dataset.py --mock
 streamlit run src/app/dashboard.py
 
-# 5) 실데이터 수집 (키 필요, 최초 1회는 오래 걸립니다)
+# 4) 실데이터 수집 (최초 1회는 오래 걸립니다 — ASOS 18개 관측소 × 3년)
 python scripts/build_dataset.py
 ```
 
-`.env` 를 옮길 때 메신저·이메일로 보내지 마십시오. 비밀번호 관리자나
-암호화 USB 를 쓰거나, 새 PC 에서 각 포털에 로그인해 키를 다시 복사하십시오.
+**Python 이 없는 PC 라면** 먼저 3.11 이상을 설치하십시오
+(Windows: `winget install Python.Python.3.12`).
 
-`data/raw/` 는 원본 응답 캐시입니다. 지워도 재호출로 복원되지만
-KAMIS 3년치 + ASOS 18개 관측소는 시간이 꽤 걸리므로, 급할 때는 이
-폴더만 따로 복사해 오면 즉시 재사용됩니다.
+### 압축본에 API 키가 들어 있습니다
+
+`.env` 를 포함했기 때문에 **압축본을 가진 사람은 모든 키를 볼 수 있습니다.**
+메일에 첨부하면 키가 메일 서버에 계속 남습니다. 다음을 유념하십시오.
+
+- 이 zip 을 다른 사람에게 전달하거나 공개 저장소에 올리지 마십시오.
+- 과정이 끝나면 각 포털에서 키를 재발급(폐기)하십시오.
+- 저장소에 커밋할 때는 `.env` 가 `.gitignore` 로 제외됩니다.
+  `git check-ignore -v .env` 로 확인할 수 있습니다.
+
+### git 이력이 함께 들어 있습니다
+
+`.git` 폴더가 포함되어 있으므로 `git log` 로 지금까지의 변경 이력을 볼 수
+있고, 이어서 커밋할 수 있습니다. 나중에 원격 저장소를 쓰고 싶으면
+`git remote add origin <URL>` 후 push 하면 됩니다.
 
 ---
 
