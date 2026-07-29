@@ -1,0 +1,21 @@
+# ★ 최초 커밋 전에 반드시 이 파일부터 만드십시오. 키가 한 번 올라가면 되돌리기 어렵습니다.
+.env
+*.env
+!.env.example
+
+data/raw/
+data/staging/
+data/*.parquet
+data/*.csv
+data/*.geojson
+
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+.ipynb_checkpoints/
+.pytest_cache/
+.DS_Store
