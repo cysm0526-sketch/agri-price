@@ -29,3 +29,11 @@ dev = ["pytest>=8.0", "ruff>=0.5"]
 
 [tool.ruff]
 line-length = 88
+
+# 이 프로젝트는 설치 가능한 패키지가 아니라 src/ 아래 스크립트를
+# sys.path 로 직접 불러 쓰는 구조입니다(agri_price 패키지 폴더가 없음).
+# Streamlit Cloud 가 pyproject.toml 을 보고 Poetry 로 자기 자신을
+# 설치하려다 "No file/folder found for package agri-price" 로 실패해서
+# 꺼둡니다. 의존성 설치는 requirements.txt 를 씁니다.
+[tool.poetry]
+package-mode = false
