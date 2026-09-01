@@ -11,6 +11,12 @@ import argparse
 import sys
 from pathlib import Path
 
+# Windows 콘솔 기본 인코딩(cp949)은 이모지 등 일부 유니코드 문자를 인코딩하지
+# 못해 print() 가 UnicodeEncodeError 로 죽습니다. 실행 초입에 UTF-8로 강제합니다.
+if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
+    sys.stdout.reconfigure(encoding="utf-8")
+    sys.stderr.reconfigure(encoding="utf-8")
+
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import pandas as pd

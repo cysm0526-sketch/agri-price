@@ -3,7 +3,7 @@
   "configurations": [
     {
       "name": "agri-price-dashboard",
-      "runtimeExecutable": "python",
+      "runtimeExecutable": ".venv/Scripts/python.exe",
       "runtimeArgs": ["-m", "streamlit", "run", "src/app/dashboard.py", "--server.port", "8501", "--server.headless", "true"],
       "port": 8501
     }

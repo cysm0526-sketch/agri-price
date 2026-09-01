@@ -4,10 +4,14 @@
 !.env.example
 
 data/raw/
-data/staging/
+data/staging/*
+!data/staging/prices.parquet
+!data/staging/news.parquet
 data/*.parquet
+!data/mart.parquet
 data/*.csv
 data/*.geojson
+!data/korea_sido.geojson
 
 __pycache__/
 *.py[cod]

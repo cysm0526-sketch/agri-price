@@ -96,6 +96,31 @@ def build_mart(prices: pd.DataFrame, weather: pd.DataFrame,
     return mart.sort_values(["item", "date"]).reset_index(drop=True)
 
 
+def item_movers(prices: pd.DataFrame) -> pd.DataFrame:
+    """품목별 전국 평균가의 최신 등락률 — 메인 화면 상승/하락 TOP5 용.
+
+    '오늘'이 아니라 '가장 최근 공개된 조사일'과 그 직전 조사일을 비교한다.
+    KAMIS·ASOS 모두 D-1~D-2 공개 지연이 있어 리터럴 오늘 데이터는 없다.
+    """
+    nat = national_prices(prices)
+    rows = []
+    for item, g in nat.groupby("item"):
+        g = g.sort_values("date").dropna(subset=["price_avg"])
+        if len(g) < 2:
+            continue
+        latest, prev = g.iloc[-1], g.iloc[-2]
+        if not prev["price_avg"]:
+            continue
+        rows.append({
+            "item": item,
+            "price": latest["price_avg"],
+            "date": latest["date"],
+            "prev_date": prev["date"],
+            "change_pct": (latest["price_avg"] / prev["price_avg"] - 1) * 100,
+        })
+    return pd.DataFrame(rows).sort_values("change_pct", ascending=False)
+
+
 def map_layer(prices: pd.DataFrame, item: str,
               as_of: pd.Timestamp | None = None) -> pd.DataFrame:
     """지도 화면용 지역별 최근 가격 + 전주 대비 변동률."""
